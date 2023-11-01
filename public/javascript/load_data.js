@@ -54,4 +54,111 @@ let cargarFechaActual = () => {
 }
 
 cargarFechaActual()
+//URL que responde con la respuesta a cargar
+//* Guayaquil -> */let URL = 'https://api.open-meteo.com/v1/forecast?latitude=-1.671&longitude=-78.6471&hourly=temperature_2m,relativehumidity_2m,precipitation_probability&daily=uv_index_max&timezone=auto'; 
+/* New York -> */let URL = 'https://api.open-meteo.com/v1/forecast?latitude=25.7743&longitude=-80.1937&hourly=temperature_2m,relativehumidity_2m,precipitation_probability&daily=uv_index_max&timezone=auto'; 
+//* Burbank -> */let URL = 'https://api.open-meteo.com/v1/forecast?latitude=34.1808&longitude=-118.309&hourly=temperature_2m,relativehumidity_2m,precipitation_probability&daily=uv_index_max&timezone=auto'; 
 
+    let cargarOpenMeteo = () => {
+    
+    fetch( URL )
+      .then(responseText => responseText.json())
+      .then(responseJSON => {
+        
+        //Respuesta en formato JSON
+    
+        //Referencia al elemento con el identificador plot
+        let plotRef = document.getElementById('plot1');
+
+        let ciudad = responseJSON.timezone.slice(8);
+
+        //Etiquetas del gráfico
+        let labels = responseJSON.hourly.time;
+    
+        //Etiquetas de los datos
+        let data = responseJSON.hourly.temperature_2m;
+    
+        //Objeto de configuración del gráfico
+        let config = {
+          type: 'line',
+          data: {
+            labels: labels, 
+            datasets: [
+              {
+                label: 'Temperature [2m]',
+                data: data, 
+              }
+            ]
+          },
+          options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Temperatura en ' + ciudad
+                }
+            }
+        }
+        };
+    
+        //Objeto con la instanciación del gráfico
+        new Chart(plotRef, config);
+    
+      })
+      .catch(console.error);
+  
+  }
+
+   
+  
+  
+  cargarPrecipitacion()
+  cargarFechaActual()
+  cargarOpenMeteo()
+
+  let cargarOpenMeteo2 = () => {
+  
+    fetch( URL )
+      .then(responseText => responseText.json())
+      .then(responseJSON => {
+        let plotRef = document.getElementById('plot2');
+    
+        //Etiquetas del gráfico
+        let labels = responseJSON.hourly.time;
+        
+        let ciudad = responseJSON.timezone.slice(8);
+    
+        //Etiquetas de los datos
+        let data = responseJSON.hourly.precipitation_probability;
+    
+        //Objeto de configuración del gráfico
+        let config = {
+          type: 'line',
+          data: {
+            labels: labels, 
+            datasets: [
+              {
+                label: 'Precipitation Probability',
+                data: data, 
+              }
+            ]
+          },
+          options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Probabilidad de Precipitación en ' + ciudad
+                }
+            }
+        }
+        };
+    
+        //Objeto con la instanciación del gráfico
+        new Chart(plotRef, config);
+        
+    
+      })
+      .catch(console.error);
+
+  }
+
+  cargarOpenMeteo2()
