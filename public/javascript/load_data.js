@@ -185,7 +185,7 @@ cargarFechaActual()
         let windSpeed = time.querySelector("windSpeed").getAttribute("mps")
         let precipitation = time.querySelector("precipitation").getAttribute("probability")
         let pressure = time.querySelector("pressure").getAttribute("value")
-        let cloud = time.querySelector("clouds").getAttribute("value")
+        let cloud = time.querySelector("clouds").getAttribute("all")
 
         let template = `
             <tr>
@@ -204,34 +204,43 @@ cargarFechaActual()
 
   }
   
-  // Callback async
+// Callback async
 let selectListener = async (event) => {
 
   let selectedCity = event.target.value
 
-  try {
+  // Lea la entrada de almacenamiento local
+  let cityStorage = localStorage.getItem(selectedCity);
+  if (cityStorage == null) {
+    try {
 
-      //API key
-      let APIkey = 'b8f0defac96000aa78354887ec9459d3'
-      let url = `https://api.openweathermap.org/data/2.5/forecast?q=${selectedCity}&mode=xml&appid=${APIkey}`
+        //API key
+        let APIkey = 'b8f0defac96000aa78354887ec9459d3'
+        let url = `https://api.openweathermap.org/data/2.5/forecast?q=${selectedCity}&mode=xml&appid=${APIkey}`
 
-      let response = await fetch(url)
-      let responseText = await response.text()
-      
-      await parseXML(responseText)
+        let response = await fetch(url)
+        let responseText = await response.text()
+        
+        await parseXML(responseText)
+        // Guarde la entrada de almacenamiento local
+        await localStorage.setItem(selectedCity, responseText)
 
-  } catch (error) {
-      console.log(error)
+    } catch (error) {
+        console.log(error)
+    }
+    } else {
+      // Procese un valor previo
+      parseXML(cityStorage)
   }
 
-  }
+}
   
-  let loadForecastByCity = () => {
+let loadForecastByCity = () => {
 
-    //Handling event
-    let selectElement = document.querySelector("select")
-    selectElement.addEventListener("change", selectListener)
-  
-  }
-  
-  loadForecastByCity()
+  //Handling event
+  let selectElement = document.querySelector("select")
+  selectElement.addEventListener("change", selectListener)
+
+}
+
+loadForecastByCity()
