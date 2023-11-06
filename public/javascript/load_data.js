@@ -180,7 +180,7 @@ cargarFechaActual()
     timeArr.forEach(time => {
         
         let from = time.getAttribute("from").replace("T", " ")
-
+        if (from.slice)
         let humidity = time.querySelector("humidity").getAttribute("value")
         let windSpeed = time.querySelector("windSpeed").getAttribute("mps")
         let precipitation = time.querySelector("precipitation").getAttribute("probability")
@@ -211,23 +211,26 @@ let selectListener = async (event) => {
 
   // Lea la entrada de almacenamiento local
   let cityStorage = localStorage.getItem(selectedCity);
-  if (cityStorage == null) {
-    try {
+  //const fechaActual = new Date();
+  //const hora = fechaActual.getHours();
+  if ((cityStorage == null)/* || (hora > (localStorage.getItem(timestamp +3)))*/){
+      try {
 
-        //API key
-        let APIkey = 'b8f0defac96000aa78354887ec9459d3'
-        let url = `https://api.openweathermap.org/data/2.5/forecast?q=${selectedCity}&mode=xml&appid=${APIkey}`
+          //API key
+          let APIkey = 'b8f0defac96000aa78354887ec9459d3'
+          let url = `https://api.openweathermap.org/data/2.5/forecast?q=${selectedCity}&mode=xml&appid=${APIkey}`
 
-        let response = await fetch(url)
-        let responseText = await response.text()
-        
-        await parseXML(responseText)
-        // Guarde la entrada de almacenamiento local
-        await localStorage.setItem(selectedCity, responseText)
+          let response = await fetch(url)
+          let responseText = await response.text()
+          
+          await parseXML(responseText)
+          //let timestamp = hora;
+          // Guarde la entrada de almacenamiento local
+          await localStorage.setItem(selectedCity,/* timestamp,*/ responseText)
 
-    } catch (error) {
-        console.log(error)
-    }
+      } catch (error) {
+          console.log(error)
+      }
     } else {
       // Procese un valor previo
       parseXML(cityStorage)
