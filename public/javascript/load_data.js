@@ -162,3 +162,32 @@ cargarFechaActual()
   }
 
   cargarOpenMeteo2()
+
+  let parseXML = (responseText) => {
+  
+    // Parsing XML
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(responseText, "application/xml");
+  
+    console.log(xml)
+  
+  }
+  
+  //Callback
+  let selectListener = (event) => {
+  
+    let selectedCity = event.target.value
+    console.log(selectedCity);
+  
+  }
+  
+  let loadForecastByCity = () => {
+
+    //Handling event
+    let selectElement = document.querySelector("select")
+    selectElement.addEventListener("change", selectListener)
+  
+  }
+  
+  loadForecastByCity()
+
