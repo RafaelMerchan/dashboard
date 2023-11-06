@@ -55,8 +55,8 @@ let cargarFechaActual = () => {
 
 cargarFechaActual()
 //URL que responde con la respuesta a cargar
-//* Guayaquil -> */let URL = 'https://api.open-meteo.com/v1/forecast?latitude=-1.671&longitude=-78.6471&hourly=temperature_2m,relativehumidity_2m,precipitation_probability&daily=uv_index_max&timezone=auto'; 
-/* New York -> */let URL = 'https://api.open-meteo.com/v1/forecast?latitude=25.7743&longitude=-80.1937&hourly=temperature_2m,relativehumidity_2m,precipitation_probability&daily=uv_index_max&timezone=auto'; 
+/* Guayaquil -> */let URL = 'https://api.open-meteo.com/v1/forecast?latitude=-1.671&longitude=-78.6471&hourly=temperature_2m,relativehumidity_2m,precipitation_probability&daily=uv_index_max&timezone=auto'; 
+//* New York -> */let URL = 'https://api.open-meteo.com/v1/forecast?latitude=25.7743&longitude=-80.1937&hourly=temperature_2m,relativehumidity_2m,precipitation_probability&daily=uv_index_max&timezone=auto'; 
 //* Burbank -> */let URL = 'https://api.open-meteo.com/v1/forecast?latitude=34.1808&longitude=-118.309&hourly=temperature_2m,relativehumidity_2m,precipitation_probability&daily=uv_index_max&timezone=auto'; 
 
     let cargarOpenMeteo = () => {
@@ -164,21 +164,66 @@ cargarFechaActual()
   cargarOpenMeteo2()
 
   let parseXML = (responseText) => {
-  
-    // Parsing XML
+
     const parser = new DOMParser();
     const xml = parser.parseFromString(responseText, "application/xml");
-  
-    console.log(xml)
-  
+
+
+    // Referencia al elemento `#forecastbody` del documento HTML
+
+    let forecastElement = document.querySelector("#forecastbody")
+    forecastElement.innerHTML = ''
+
+    // Procesamiento de los elementos con etiqueta `<time>` del objeto xml
+    let timeArr = xml.querySelectorAll("time")
+
+    timeArr.forEach(time => {
+        
+        let from = time.getAttribute("from").replace("T", " ")
+
+        let humidity = time.querySelector("humidity").getAttribute("value")
+        let windSpeed = time.querySelector("windSpeed").getAttribute("mps")
+        let precipitation = time.querySelector("precipitation").getAttribute("probability")
+        let pressure = time.querySelector("pressure").getAttribute("value")
+        let cloud = time.querySelector("clouds").getAttribute("value")
+
+        let template = `
+            <tr>
+                <td>${from}</td>
+                <td>${humidity}</td>
+                <td>${windSpeed}</td>
+                <td>${precipitation}</td>
+                <td>${pressure}</td>
+                <td>${cloud}</td>
+            </tr>
+        `
+
+        //Renderizando la plantilla en el elemento HTML
+        forecastElement.innerHTML += template;
+    })
+
   }
   
-  //Callback
-  let selectListener = (event) => {
-  
-    let selectedCity = event.target.value
-    console.log(selectedCity);
-  
+  // Callback async
+let selectListener = async (event) => {
+
+  let selectedCity = event.target.value
+
+  try {
+
+      //API key
+      let APIkey = 'b8f0defac96000aa78354887ec9459d3'
+      let url = `https://api.openweathermap.org/data/2.5/forecast?q=${selectedCity}&mode=xml&appid=${APIkey}`
+
+      let response = await fetch(url)
+      let responseText = await response.text()
+      
+      await parseXML(responseText)
+
+  } catch (error) {
+      console.log(error)
+  }
+
   }
   
   let loadForecastByCity = () => {
@@ -190,4 +235,3 @@ cargarFechaActual()
   }
   
   loadForecastByCity()
-
