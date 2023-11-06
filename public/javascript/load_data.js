@@ -180,7 +180,7 @@ cargarFechaActual()
     timeArr.forEach(time => {
         
         let from = time.getAttribute("from").replace("T", " ")
-        if (from.slice)
+
         let humidity = time.querySelector("humidity").getAttribute("value")
         let windSpeed = time.querySelector("windSpeed").getAttribute("mps")
         let precipitation = time.querySelector("precipitation").getAttribute("probability")
