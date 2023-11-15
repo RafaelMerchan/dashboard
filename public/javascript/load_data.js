@@ -247,3 +247,13 @@ let loadForecastByCity = () => {
 }
 
 loadForecastByCity()
+
+let loadExternalTable = () => {
+  
+  //Requerimiento asíncrono
+
+  
+  elementoDOM.innerHTML = elementoXML.outerHTML
+ }
+ 
+ loadExternalTable()
